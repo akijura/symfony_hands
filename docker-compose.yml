@@ -1,0 +1,32 @@
+version: "3"
+services:
+    hands:
+        container_name: hands
+        build:
+            dockerfile: Dockerfile
+            context: .
+            args:
+                - PROXY=http://172.25.113.50:8085
+        volumes:
+            - ".:/var/www/"
+        ports:
+            - "8088:80"
+            - "8085:8011"
+        networks:
+            - hands_network
+    pgsql_hands:
+        container_name: pgsql_hands
+        image: postgres:14.5-alpine
+        ports:
+            - 5488:5432
+        environment:
+            - POSTGRES_DB=hands
+            - POSTGRES_USER=hands
+            - POSTGRES_PASSWORD=hands
+        volumes:
+            - "./data:/var/lib/postgresql/data"
+        networks:
+            - hands_network
+networks:
+    hands_network:
+        driver: bridge
