@@ -6,7 +6,9 @@ use App\Entity\Comment;
 use App\Entity\MicroPost;
 use App\Entity\User;
 use App\Entity\UserProfile;
+use App\Form\CommentType;
 use App\Form\MicroPostType;
+use App\Repository\CommentRepository;
 use App\Repository\MicroPostRepository;
 use App\Repository\UserProfileRepository;
 use DateTime;
@@ -25,27 +27,9 @@ class MicroPostController extends AbstractController
         ]);
     }
     #[Route('/micro/post/{post}', name: 'app_micro_post_show')]
-    public function showOne(MicroPost $post, MicroPostRepository $posts): Response
+    public function showOne(MicroPost $post): Response
     {
-        $post = new MicroPost();
-        $post->setTitle('Hello');
-        $post->setText('Hello');
-        $post->setCreated(new DateTime());
 
-        $comment = new Comment();
-        $comment->setText('Hello');
-
-        $post->addComment($comment);
-        $posts->save($post,true);
-
-        // $user = new User();
-        // $user->setEmail('akki.jura96@gmail.com');
-        // $user->setPassword('akki9696');
-        // $profile = new UserProfile();
-        // $profile->setUserRel($user);
-        // $profiles->save($profile,true);
-
-        
         return $this->render('micro_post/show.html.twig',[
             'post' => $post
         ]);
@@ -87,7 +71,31 @@ class MicroPostController extends AbstractController
         }
         return $this->render('micro_post/edit.html.twig',
             [
-                'form' => $form
+                'form' => $form,
+                'post' =>$post
+            ]
+        );
+    }
+    #[Route('/micro/post/{post}/comment', name: 'app_micro_post_comment')]
+    public function addComment(MicroPost $post,Request $request,CommentRepository $comments): Response
+    {
+        $form = $this->createForm(CommentType::class, new Comment());
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()) {
+            $comment = $form->getData();
+            $comment->setPost($post);
+            $comments->save($comment,true);
+            // add a flash
+            $this->addFlash('success','Your comment has been updated');
+            // redirect to other page
+            return $this->redirectToRoute('app_micro_post_show',[
+                'post'=> $post->getId()
+            ]);
+        }
+        return $this->render('micro_post/comment.html.twig',
+            [
+                'form' => $form,
+                'post' => $post
             ]
         );
     }
