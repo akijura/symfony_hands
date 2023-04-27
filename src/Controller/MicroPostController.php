@@ -2,9 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Comment;
 use App\Entity\MicroPost;
+use App\Entity\User;
+use App\Entity\UserProfile;
 use App\Form\MicroPostType;
 use App\Repository\MicroPostRepository;
+use App\Repository\UserProfileRepository;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,8 +25,27 @@ class MicroPostController extends AbstractController
         ]);
     }
     #[Route('/micro/post/{post}', name: 'app_micro_post_show')]
-    public function showOne(MicroPost $post): Response
+    public function showOne(MicroPost $post, MicroPostRepository $posts): Response
     {
+        $post = new MicroPost();
+        $post->setTitle('Hello');
+        $post->setText('Hello');
+        $post->setCreated(new DateTime());
+
+        $comment = new Comment();
+        $comment->setText('Hello');
+
+        $post->addComment($comment);
+        $posts->save($post,true);
+
+        // $user = new User();
+        // $user->setEmail('akki.jura96@gmail.com');
+        // $user->setPassword('akki9696');
+        // $profile = new UserProfile();
+        // $profile->setUserRel($user);
+        // $profiles->save($profile,true);
+
+        
         return $this->render('micro_post/show.html.twig',[
             'post' => $post
         ]);
