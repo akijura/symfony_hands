@@ -25,6 +25,7 @@ class MicroPostVoter extends Voter
     /**
      * @param MicroPost $subject
      */
+
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         /** @var User $user */
@@ -34,18 +35,29 @@ class MicroPostVoter extends Voter
         //     return false;
         // }
         $isAuth = $user instanceof UserInterface;
-        if ($this->security->isGranted('ROLE_ADMIN')) {
-                return true;
+
+        if ($this->security->isGranted('ROLE_ADMIN')){
+            return true;
         }
+
         // ... (check conditions and return true to grant permission) ...
         switch ($attribute) {
             case MicroPost::EDIT:
-                return $isAuth && (
-                    ($subject->getAuthor()->getId() === $user->getId()) || $this->security->isGranted('ROLE_EDITOR')
+                return $isAuth
+                && (
+                    ($subject->getAuthor()->getId() === $user->getId()) ||
+                    $this->security->isGranted('ROLE_EDITOR')
                 );
             case MicroPost::VIEW:
-                return true;
-        }
+                if (!$subject->isExtraPrivacy()) {
+                    return true; 
+                }
+
+                return $isAuth &&
+                ($subject->getAuthor()->getId() === $user->getId()
+                    || $subject->getAuthor()->getFollows()->contains($user)
+                );
+            }
 
         return false;
     }

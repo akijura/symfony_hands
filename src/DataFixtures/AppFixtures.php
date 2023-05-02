@@ -44,6 +44,7 @@ class AppFixtures extends Fixture
         $micro_post->setText('Welcome to Poland');
         $micro_post->setCreated(new DateTime());
         $micro_post->setAuthor($user1);
+        $micro_post->setExtraPrivacy(false);
         $manager->persist($micro_post);
 
         $micro_post2 = new MicroPost;
@@ -51,6 +52,7 @@ class AppFixtures extends Fixture
         $micro_post2->setText('Welcome to Germany');
         $micro_post2->setCreated(new DateTime());
         $micro_post2->setAuthor($user2);
+        $micro_post2->setExtraPrivacy(false);
         $manager->persist($micro_post2);
 
         $micro_post3 = new MicroPost;
@@ -58,6 +60,7 @@ class AppFixtures extends Fixture
         $micro_post3->setText('Welcome to Uzb');
         $micro_post3->setCreated(new DateTime());
         $micro_post3->setAuthor($user1);
+        $micro_post3->setExtraPrivacy(false);
         $manager->persist($micro_post3);
 
         $manager->flush();
