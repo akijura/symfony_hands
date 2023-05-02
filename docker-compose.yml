@@ -27,6 +27,11 @@ services:
             - "./data:/var/lib/postgresql/data"
         networks:
             - hands_network
+    mailer:
+        image: schickling/mailcatcher
+        ports:
+            - "1080:1080"
+            - "1025:1025"
 networks:
     hands_network:
         driver: bridge

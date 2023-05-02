@@ -34,7 +34,7 @@ class MicroPostController extends AbstractController
     }
     
     #[Route('/micro/post/add', name: 'app_micro_post_add',priority:2)]
-    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    #[IsGranted('ROLE_WRITER')]
     public function add(Request $request, MicroPostRepository $posts): Response
     {
         // $this->denyAccessUnlessGranted(
@@ -80,7 +80,7 @@ class MicroPostController extends AbstractController
         );
     }
     #[Route('/micro/post/{post}/comment', name: 'app_micro_post_comment')]
-    #[IsGranted('ROLE_COMMENTER')]
+    #[IsGranted(MicroPost::EDIT,'post')]
     public function addComment(MicroPost $post,Request $request,CommentRepository $comments): Response
     {
         $form = $this->createForm(CommentType::class, new Comment());
